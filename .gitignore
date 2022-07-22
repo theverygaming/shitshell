@@ -1,0 +1,4 @@
+*.oc
+*.oasm
+shitshell
+.vscode/*.*
