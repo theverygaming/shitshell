@@ -29,7 +29,7 @@ int strcmp(const char* str1, const char* str2) {
         str1++;
         str2++;
     }
-    return *str1 - *str2;
+    return *((const unsigned char*)str1) - *((const unsigned char*)str2);
 }
 
 size_t strlen(const char* str) {
