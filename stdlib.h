@@ -16,6 +16,7 @@ typedef char* va_list;
 #define va_end		   __builtin_va_end
 
 size_t sscanf(const char* str, const char* fmt, ...);
+int printf(const char* fmt, ...);
 
 /* math */
 double sin(double x);

@@ -107,6 +107,38 @@ size_t sscanf(const char* str, const char* fmt, ...) {
     return items_filled;
 }
 
+int printf(const char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    
+    size_t chars_written = 0;
+    while (*fmt) {
+        if(*fmt == '%') {
+            fmt++;
+            switch(*fmt) {
+                case '%': {
+                    fmt += 1;
+                    sys_write(1, "%", 1);
+                    break;
+                }
+                case 's': {
+                    fmt += 1;
+                    char* arg = va_arg(args, char*);
+                    sys_write(1, arg, strlen(arg));
+                    chars_written += strlen(arg);
+                    break;
+                }
+            }
+        }
+        int count = strcspn(fmt, "%");
+        sys_write(1, fmt, count);
+        chars_written += count;
+        fmt += count;
+    }
+
+    va_end(args);
+    return chars_written;
+}
 
 double sin(double x) {
     float xf = (float)x;
