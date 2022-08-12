@@ -31,28 +31,21 @@ bool run_internal_cmd(char* cmd, char* argv[]) {
     
     if(!strcmp(cmd, "boop")) {
         if(argc > 1) {
-            sys_write(1, "*", 1);
             if(!strcmp(argv[1], "me")) {
-                sys_write(1, "boops you", 9);
+                printf("*boops you* :3\n");
             }
             else {
-                sys_write(1, argv[1], strlen(argv[1]));
-                sys_write(1, " boops back", 11);
-            }
-            sys_write(1, "*", 1);
-            if(!strcmp(argv[1], "me")) {
-                sys_write(1, " :3", 3);
+                printf("*boops %s*\n", argv[1]);
             }
         }
         else {
-            sys_write(1, ":flushed:", 10);
+            printf(":flushed:\n");
         }
-        sys_write(1, "\n", 1);
         return true;
     }
 
     if(!strcmp(cmd, "exit")) {
-        sys_write(1, "https://tenor.com/view/crying-emoji-dies-gif-21956120\n", 54);
+        printf("https://tenor.com/view/crying-emoji-dies-gif-21956120\n");
         shell_running = false;
         return true;
     }
@@ -61,25 +54,23 @@ bool run_internal_cmd(char* cmd, char* argv[]) {
 }
 
 int main(int argc, char* argv[], char* envp[]) {
-    sys_write(1, "envp:\n", 6);
+    printf("envp:\n");
     size_t cntr = 0;
     while (envp[cntr]) {
-        sys_write(1, envp[cntr], strlen(envp[cntr]));
-        sys_write(1, "\n", 1);
+        printf("%s\n", envp[cntr]);
         cntr++;
     }
-    sys_write(1, "argv:\n", 6);
+    printf("argv:\n");
     for (int i = 0; i < argc; i++) {
-        sys_write(1, argv[i], strlen(argv[i]));
-        sys_write(1, "\n", 1);
+        printf("%s\n", argv[i]);
     }
 
-    sys_write(1, "welcome to the shitshell:tm:\n", 29);
+    printf("welcome to the shitshell:tm:\n");
 
     char input_buf[100];
 
     while(shell_running) {
-        sys_write(1, "# ", 2);
+        printf("# ");
         sys_read(1, input_buf, sizeof(input_buf));
         replace_chars(input_buf, sizeof(input_buf), '\n', '\0');
 
@@ -105,7 +96,7 @@ int main(int argc, char* argv[], char* envp[]) {
         pid_t forked = sys_fork();
         if(!forked) {
             sys_execve(arg_arr[0], arg_arr, 0);
-            sys_write(1, "execve failed!\n", 15);
+            printf("execve failed!\n");
             return 1; // execve failed
         }
         for(uint32_t i = 0; i < 0xFFFFFF; i++) {}
