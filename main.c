@@ -69,11 +69,17 @@ int main(int argc, char* argv[], char* envp[]) {
 
     char input_buf[100];
 
+    struct utsname uname_buf;
+    sys_uname(&uname_buf);
+    printf("running on: %s %s %s %s %s\n", uname_buf.sysname, uname_buf.nodename, uname_buf.release, uname_buf.version, uname_buf.machine);
+
     while(shell_running) {
-        printf("# ");
+        char cwd[100];
+        sys_getcwd(cwd, 100);
+        printf("%s@%s:%s# ", "balls", uname_buf.nodename, cwd);
+
         sys_read(1, input_buf, sizeof(input_buf));
         replace_chars(input_buf, sizeof(input_buf), '\n', '\0');
-
         /* create argv array, null terminated */
         memcpy(input_buf, input_buf, strlen(input_buf));
         int arg_count = countc(input_buf, ' ') + 1; // count spaces in string

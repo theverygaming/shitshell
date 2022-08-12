@@ -1,4 +1,5 @@
 #include "syscall.h"
+#include "stdlib.h"
 
 extern uint32_t syscall(void* syscall_num, void* a1, void* a2, void* a3, void* a4, void* a5, void* a6);
 
@@ -20,4 +21,12 @@ pid_t sys_fork() {
 
 void sys_execve(const char* filename, char** argv, const char *const *envp) {
     syscall(11, filename, argv, envp, 0, 0, 0);
+}
+
+int sys_uname(struct utsname *buf) {
+    return syscall(122, buf, 0, 0, 0, 0, 0);
+}
+
+char *sys_getcwd(char *buf, size_t size) {
+    return syscall(183, buf, size, 0, 0, 0, 0);
 }
