@@ -1,4 +1,5 @@
 #include "stdlib.h"
+#include "syscall.h"
 
 void* memcpy(void* dest, const void* src, size_t n) {
     char* dest2 = (char*)dest;
@@ -62,10 +63,10 @@ size_t strcspn(const char* s1, const char* s2) {
     return n;
 }
 
-char* strstr(const char* str1, const char* str2) {
-    size_t str2s = strlen(str2);
+const char* strstr(const char* str1, const char* str2) {
+    size_t str2len = strlen(str2);
     while(*str1) {
-        if(!memcmp(str1++, str2, str2s)) { return str1 -1; }
+        if(!memcmp(str1++, str2, str2len)) { return str1 -1; }
     }
     return 0;
 }

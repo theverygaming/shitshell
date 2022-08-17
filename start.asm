@@ -19,6 +19,6 @@ _start:
     mov ebx, eax ; main returns in eax
     mov eax, 1 ; sys_exit
     int 0x80
-.loop
+.loop:
     hlt ; if we are here something went wrong badly
     jmp .loop

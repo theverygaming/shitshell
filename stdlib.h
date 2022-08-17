@@ -8,7 +8,7 @@ int strcmp(const char* str1, const char* str2);
 size_t strlen(const char* str);
 char* strchr(char* str, int character);
 size_t strcspn(const char* str1, const char* str2);
-char* strstr(const char* str1, const char* str2);
+const char* strstr(const char* str1, const char* str2);
 
 typedef char* va_list;
 #define va_start(v,l)  __builtin_va_start((v),(l))

@@ -89,9 +89,9 @@ int main(int argc, char* argv[], char* envp[]) {
         for(int i = 0; i < arg_count; i++) {
             arg_arr[i] = strptr;
             while(*strptr && *strptr != ' ') {
-                *strptr++;
+                strptr++;
             }
-            *strptr++;
+            strptr++;
         }
         replace_chars(input_buf, sizeof(input_buf), ' ', '\0');
 
