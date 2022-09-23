@@ -3,6 +3,10 @@
 
 extern uint32_t syscall(uint32_t syscall_num, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, uint32_t a5, uint32_t a6);
 
+void sys_exit(int error_code) {
+    syscall(1, (uint32_t)error_code, 0, 0, 0, 0, 0);
+}
+
 void sys_write(uint32_t fd, const char* buf, size_t count) {
     syscall(4, fd, (uint32_t)buf, count, 0, 0, 0);
 }

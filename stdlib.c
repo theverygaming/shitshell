@@ -1,6 +1,12 @@
 #include "stdlib.h"
 #include "syscall.h"
 
+void exit(int status) {
+    sys_exit(status);
+    printf("OS skill issues\n");
+    while(true) {}
+}
+
 void *memcpy(void *dest, const void *src, size_t n) {
     char *dest2 = (char *)dest;
     char *src2 = (char *)src;

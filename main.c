@@ -2,8 +2,6 @@
 #include "syscall.h"
 #include "stdlib.h"
 
-bool shell_running = true;
-
 static void replace_chars(char* str, size_t len,  char c, char r) {
     while(len--) {
         if(*str == c) {
@@ -35,18 +33,18 @@ bool run_internal_cmd(char* cmd, char* argv[]) {
                 printf("*boops you* :3\n");
             }
             else {
-                printf("*boops %s*\n", argv[1]);
+                printf("*boops %s* :3\n", argv[1]);
             }
         }
         else {
-            printf(":flushed:\n");
+            printf("usage: boop [name]\n");
         }
         return true;
     }
 
     if(!strcmp(cmd, "exit")) {
         printf("https://tenor.com/view/crying-emoji-dies-gif-21956120\n");
-        shell_running = false;
+        exit(0);
         return true;
     }
 
@@ -73,7 +71,7 @@ int main(int argc, char* argv[], char* envp[]) {
     sys_uname(&uname_buf);
     printf("running on: %s %s %s %s %s\n", uname_buf.sysname, uname_buf.nodename, uname_buf.release, uname_buf.version, uname_buf.machine);
 
-    while(shell_running) {
+    while(true) {
         char cwd[100];
         sys_getcwd(cwd, 100);
         printf("%s@%s:%s# ", "balls", uname_buf.nodename, cwd);
