@@ -4,7 +4,7 @@
 void exit(int status) {
     sys_exit(status);
     printf("OS skill issues\n");
-    while(true) {}
+    while (true) {}
 }
 
 void *memcpy(void *dest, const void *src, size_t n) {
@@ -181,4 +181,18 @@ double cos(double x) {
                  : "=r"(xfp)
                  : "r"(xfp));
     return (double)xf;
+}
+
+static int rand_seed = 1;
+
+int rand() {
+    rand_seed = (42069 * rand_seed + 1) % (RAND_MAX + 1);
+    if (rand_seed < 0) { // make sure the result is always positive
+        rand_seed = -rand_seed;
+    }
+    return rand_seed;
+}
+
+void srand(unsigned int seed) {
+    rand_seed = seed + 621;
 }
