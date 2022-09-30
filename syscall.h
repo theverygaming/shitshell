@@ -1,6 +1,8 @@
 #pragma once
 #include "types.h"
 
+extern uint32_t syscall(uint32_t syscall_num, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, uint32_t a5, uint32_t a6);
+
 typedef int pid_t;
 
 void sys_exit(int error_code);

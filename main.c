@@ -21,7 +21,32 @@ static int countc(const char *str, char c) {
     return count;
 }
 
+static void syscallfuzz() {
+    int number = 0;
+    while (true) {
+        pid_t pid = sys_fork();
+        number++;
+        if (pid == 0) {
+            for (int i = 0; i < 42069; i++) {
+                uint32_t syscall_id = rand() % 400;
+                if(syscall_id != 3) { // we are not testing sys_read... that may block the process and be a bit of an issue
+                    syscall(syscall_id, rand(), rand(), rand(), rand(), rand(), rand());
+                }
+            }
+            exit(rand());
+        }
+        sys_waitpid(pid, 0, 0);
+        srand(number + pid); // must advance random function
+    }
+}
+
 bool run_internal_cmd(int argc, char *argv[]) {
+
+    if (!strcmp(argv[0], "help")) {
+        printf("shitshell command list:\nhelp\nboop [name]\nexit\nsyscallfuzz -- do the funny and fuzz kernel with random syscalls DO NOT RUN THIS ON IMPORTANT MACHINES, YOU MAY LOSE FILES\n");
+        return true;
+    }
+
     if (!strcmp(argv[0], "boop")) {
         if (argc > 1) {
             printf("*boops ");
@@ -33,7 +58,7 @@ bool run_internal_cmd(int argc, char *argv[]) {
                 }
 
                 if (i != (argc - 1)) {
-                    if(i == (argc - 2)) {
+                    if (i == (argc - 2)) {
                         printf(" and ");
                     } else {
                         printf(", ");
@@ -54,6 +79,18 @@ bool run_internal_cmd(int argc, char *argv[]) {
     if (!strcmp(argv[0], "exit")) {
         printf("https://tenor.com/view/crying-emoji-dies-gif-21956120\n");
         exit(0);
+        return true;
+    }
+
+    if (!strcmp(argv[0], "syscallfuzz")) {
+        printf("you sure? then enter 'yes... i know i may lose important files'\n");
+        char buf[100];
+        sys_read(1, buf, sizeof(buf));
+        replace_chars(buf, sizeof(buf), '\n', '\0');
+        if (!strcmp(buf, "yes... i know i may lose important files")) {
+            printf("fuzzing kernel...\n");
+            syscallfuzz();
+        }
         return true;
     }
 
