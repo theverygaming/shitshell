@@ -128,6 +128,31 @@ size_t sscanf(const char *str, const char *fmt, ...) {
     return items_filled;
 }
 
+char *itoa(size_t value, char *str, size_t base) {
+    char *ptr = str;
+
+    do {
+        size_t mod = value % base;
+        unsigned char start = '0';
+        if ((base == 16) && (mod > 9)) {
+            start = 'a';
+            mod -= 10;
+        }
+        *ptr++ = start + mod;
+    } while ((value /= base) > 0);
+    *ptr = '\0';
+
+    size_t len = strlen(str);
+
+    for (int i = 0; i < len / 2; i++) {
+        char c = str[i];
+        str[i] = str[len - i - 1];
+        str[len - i - 1] = c;
+    }
+
+    return str;
+}
+
 int printf(const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
@@ -147,6 +172,15 @@ int printf(const char *fmt, ...) {
                 char *arg = va_arg(args, char *);
                 sys_write(1, arg, strlen(arg));
                 chars_written += strlen(arg);
+                break;
+            }
+            case 'u': {
+                fmt += 1;
+                size_t arg = va_arg(args, size_t);
+                char buf[11];
+                char *ret = itoa(arg, buf, 10);
+                sys_write(1, ret, strlen(ret));
+                chars_written += strlen(ret);
                 break;
             }
             }

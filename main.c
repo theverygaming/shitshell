@@ -29,7 +29,7 @@ static void syscallfuzz() {
         if (pid == 0) {
             for (int i = 0; i < 42069; i++) {
                 uint32_t syscall_id = rand() % 400;
-                if(syscall_id != 3) { // we are not testing sys_read... that may block the process and be a bit of an issue
+                if (syscall_id != 3) { // we are not testing sys_read... that may block the process and be a bit of an issue
                     syscall(syscall_id, rand(), rand(), rand(), rand(), rand(), rand());
                 }
             }
@@ -41,9 +41,9 @@ static void syscallfuzz() {
 }
 
 bool run_internal_cmd(int argc, char *argv[]) {
-
     if (!strcmp(argv[0], "help")) {
-        printf("shitshell command list:\nhelp\nboop [name]\nexit\nsyscallfuzz -- do the funny and fuzz kernel with random syscalls DO NOT RUN THIS ON IMPORTANT MACHINES, YOU MAY LOSE FILES\n");
+        printf("shitshell command list:\nhelp\nboop [name]\nsysinfo -- print output from sysinfo syscall\nexit\nsyscallfuzz -- do the funny and fuzz kernel with random syscalls DO NOT RUN THIS ON "
+               "IMPORTANT MACHINES, YOU MAY LOSE FILES\n");
         return true;
     }
 
@@ -76,6 +76,20 @@ bool run_internal_cmd(int argc, char *argv[]) {
         return true;
     }
 
+    if (!strcmp(argv[0], "sysinfo")) {
+        struct sysinfo info;
+        if (sys_sysinfo(&info) != 0) {
+            printf("sysinfo skill issue\n");
+            return true;
+        }
+        printf("uptime(seconds): %u\ntotal RAM: %uMiB\nfree RAM: %uMiB\nprocesses: %u\n",
+               (size_t)info.uptime,
+               ((size_t)info.totalram * info.mem_unit) / 1048576,
+               ((size_t)info.freeram * info.mem_unit) / 1048576,
+               (size_t)info.procs);
+        return true;
+    }
+
     if (!strcmp(argv[0], "exit")) {
         printf("https://tenor.com/view/crying-emoji-dies-gif-21956120\n");
         exit(0);
@@ -98,17 +112,6 @@ bool run_internal_cmd(int argc, char *argv[]) {
 }
 
 int main(int argc, char *argv[], char *envp[]) {
-    printf("envp:\n");
-    size_t cntr = 0;
-    while (envp[cntr]) {
-        printf("%s\n", envp[cntr]);
-        cntr++;
-    }
-    printf("argv:\n");
-    for (int i = 0; i < argc; i++) {
-        printf("%s\n", argv[i]);
-    }
-
     printf("welcome to the shitshell:tm:\n");
 
     char input_buf[100];
