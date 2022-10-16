@@ -116,6 +116,14 @@ int main(int argc, char *argv[], char *envp[]) {
 
     char input_buf[100];
 
+    struct sysinfo info;
+    sys_sysinfo(&info);
+    printf("uptime(seconds): %u\ntotal RAM: %uMiB\nfree RAM: %uMiB\nprocesses: %u\n",
+           (size_t)info.uptime,
+           ((size_t)info.totalram * info.mem_unit) / 1048576,
+           ((size_t)info.freeram * info.mem_unit) / 1048576,
+           (size_t)info.procs);
+
     struct utsname uname_buf;
     sys_uname(&uname_buf);
     printf("running on: %s %s %s %s %s\n", uname_buf.sysname, uname_buf.nodename, uname_buf.release, uname_buf.version, uname_buf.machine);
