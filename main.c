@@ -1,6 +1,7 @@
-#include "stdlib.h"
-#include "syscall.h"
-#include "types.h"
+#include <shitcstd/stdint.h>
+#include <shitcstd/stdbool.h>
+#include <shitcstd/stdlib.h>
+#include <shitcstd/linux_x86/syscall.h>
 
 static void replace_chars(char *str, size_t len, char c, char r) {
     while (len--) {

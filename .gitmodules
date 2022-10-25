@@ -1,0 +1,3 @@
+[submodule "shitcstd"]
+	path = shitcstd
+	url = https://github.com/theverygaming/shitcstd.git

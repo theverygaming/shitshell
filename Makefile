@@ -1,18 +1,19 @@
 CC = gcc
-CFLAGS = -nostdlib -Wall -m32 -march=i386 -fno-pie -fno-stack-protector -ffreestanding
+CFLAGS = -I shitcstd/include -nostdlib -Wall -m32 -march=i386 -fno-pie -fno-stack-protector -ffreestanding
 
-all: shitshell
+all: shitcstd/build/libshitcstd.a shitshell
 
-shitshell: start.oasm main.oc syscall.oasm syscall.oc stdlib.oc
-	@ld -m elf_i386 -nostdlib $^ -o $@
+shitcstd/build/libshitcstd.a:
+	@mkdir -p shitcstd/build
+	@cd shitcstd/build && cmake .. && make
 
-%.oc: %.c
+shitshell: main.o
+	@ld -m elf_i386 -static -nostdlib $^ shitcstd/build/libshitcstd.a -o $@
+
+%.o: %.c
 	@echo "-> compiling shitshell/$<"
 	@$(CC) $(CFLAGS) -c $< -o $@
 
-%.oasm: %.asm
-	@echo "-> compiling shitshell/$^"
-	@nasm -f elf32 -o $@ $^
-
 clean:
 	@rm -f shitshell *.oasm *.oc *.o
+	@rm -rf shitcstd/build/
