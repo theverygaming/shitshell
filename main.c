@@ -44,7 +44,7 @@ static void syscallfuzz() {
 bool run_internal_cmd(int argc, char *argv[]) {
     if (!strcmp(argv[0], "help")) {
         printf("shitshell command list:\nhelp\nboop [name]\nsysinfo -- print output from sysinfo syscall\nexit\nsyscallfuzz -- do the funny and fuzz kernel with random syscalls DO NOT RUN THIS ON "
-               "IMPORTANT MACHINES, YOU MAY LOSE FILES\n");
+               "IMPORTANT MACHINES, YOU MAY LOSE FILES\nclear\n");
         return true;
     }
 
@@ -106,6 +106,11 @@ bool run_internal_cmd(int argc, char *argv[]) {
             printf("fuzzing kernel...\n");
             syscallfuzz();
         }
+        return true;
+    }
+
+    if (!strcmp(argv[0], "clear")) {
+        printf("\e[1;1H\e[2J");
         return true;
     }
 
