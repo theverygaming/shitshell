@@ -1,13 +1,13 @@
 CC = gcc
-CFLAGS = -I shitcstd/include -nostdlib -Wall -m32 -march=i386 -fno-pie -fno-stack-protector -ffreestanding
+CFLAGS = -I shitcstd/include -nostdinc -nostdlib -Wall -m32 -march=i386 -fno-pie -fno-stack-protector -ffreestanding
 
-all: shitcstd/build/libshitcstd.a shitshell
+all: shitshell
 
 shitcstd/build/libshitcstd.a:
 	@mkdir -p shitcstd/build
 	@cd shitcstd/build && cmake .. && make
 
-shitshell: main.o
+shitshell: shitcstd/build/libshitcstd.a main.o
 	@ld -m elf_i386 -static -nostdlib $^ shitcstd/build/libshitcstd.a -o $@
 
 %.o: %.c

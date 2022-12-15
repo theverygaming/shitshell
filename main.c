@@ -1,7 +1,7 @@
-#include <shitcstd/stdint.h>
-#include <shitcstd/stdbool.h>
-#include <shitcstd/stdlib.h>
-#include <shitcstd/linux_x86/syscall.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <linux_x86/syscall.h>
 
 static void replace_chars(char *str, size_t len, char c, char r) {
     while (len--) {
