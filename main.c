@@ -44,7 +44,7 @@ static void syscallfuzz() {
 bool run_internal_cmd(int argc, char *argv[]) {
     if (!strcmp(argv[0], "help")) {
         printf("shitshell command list:\nhelp\nboop [name]\nsysinfo -- print output from sysinfo syscall\nexit\nsyscallfuzz -- do the funny and fuzz kernel with random syscalls DO NOT RUN THIS ON "
-               "IMPORTANT MACHINES, YOU MAY LOSE FILES\nclear\nloop\n");
+               "IMPORTANT MACHINES, YOU MAY LOSE FILES\nclear\nloop\ndebug -- shitOS specific\n");
         return true;
     }
 
@@ -119,6 +119,11 @@ bool run_internal_cmd(int argc, char *argv[]) {
         return true;
     }
 
+    if (!strcmp(argv[0], "debug")) {
+        syscall(0, 1, 0, 0, 0, 0, 0);
+        return true;
+    }
+
     return false;
 }
 
@@ -175,7 +180,6 @@ int main(int argc, char *argv[], char *envp[]) {
             printf("execve failed!\n");
             return 1; // execve failed
         }
-        for (uint32_t i = 0; i < 0xFFFFFF; i++) {}
         sys_waitpid(forked, 0, 0);
 
         memset(input_buf, 0, 100); // clear buffer

@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -I shitcstd/include -nostdinc -nostdlib -Wall -m32 -march=i386 -fno-pie -fno-stack-protector -ffreestanding
+CFLAGS = -I shitcstd/include -nostdinc -nostdlib -Wall -m32 -march=i386 -fno-pie -fno-stack-protector -ffreestanding -g
 
 all: shitshell
 
