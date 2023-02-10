@@ -1,2 +1,2 @@
 # shitshell
-a shell written for [shitOS](https://github.com/theverygaming/shitOS)
+a shell written for [vix](https://github.com/theverygaming/vix) (used for testing purposes)

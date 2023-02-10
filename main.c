@@ -44,7 +44,7 @@ static void syscallfuzz() {
 bool run_internal_cmd(int argc, char *argv[]) {
     if (!strcmp(argv[0], "help")) {
         printf("shitshell command list:\nhelp\nboop [name]\nsysinfo -- print output from sysinfo syscall\nexit\nsyscallfuzz -- do the funny and fuzz kernel with random syscalls DO NOT RUN THIS ON "
-               "IMPORTANT MACHINES, YOU MAY LOSE FILES\nclear\nloop\ndebug -- shitOS specific\n");
+               "IMPORTANT MACHINES, YOU MAY LOSE FILES\nclear\nloop\ndebug -- vix specific\n");
         return true;
     }
 
@@ -146,7 +146,7 @@ int main(int argc, char *argv[], char *envp[]) {
     while (true) {
         char cwd[100];
         sys_getcwd(cwd, 100);
-        printf("%s@%s:%s# ", "unknown", uname_buf.nodename, cwd); // we do not figure out the current username because that would require reading /etc/passwd which shitOS doesn't support _yet_
+        printf("%s@%s:%s# ", "unknown", uname_buf.nodename, cwd); // we do not figure out the current username because that would require reading /etc/passwd which vix doesn't support _yet_
 
         sys_read(1, input_buf, sizeof(input_buf));
         replace_chars(input_buf, sizeof(input_buf), '\n', '\0');
