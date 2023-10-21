@@ -100,7 +100,7 @@ bool run_internal_cmd(int argc, char *argv[]) {
     if (!strcmp(argv[0], "syscallfuzz")) {
         printf("you sure? then enter 'yes... i know i may lose important files'\n");
         char buf[100];
-        sys_read(1, buf, sizeof(buf));
+        sys_read(0, buf, sizeof(buf));
         replace_chars(buf, sizeof(buf), '\n', '\0');
         if (!strcmp(buf, "yes... i know i may lose important files")) {
             printf("fuzzing kernel...\n");
@@ -148,7 +148,7 @@ int main(int argc, char *argv[], char *envp[]) {
         sys_getcwd(cwd, 100);
         printf("%s@%s:%s# ", "unknown", uname_buf.nodename, cwd); // we do not figure out the current username because that would require reading /etc/passwd which vix doesn't support _yet_
 
-        sys_read(1, input_buf, sizeof(input_buf));
+        sys_read(0, input_buf, sizeof(input_buf));
         replace_chars(input_buf, sizeof(input_buf), '\n', '\0');
         /* create argv array, null terminated */
         memcpy(input_buf, input_buf, strlen(input_buf));
