@@ -2,6 +2,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 
 static void replace_chars(char *str, size_t len, char c, char r) {
     while (len--) {
