@@ -1,5 +1,4 @@
 *.o
-*.oc
 *.oasm
 shitshell
 .vscode/*.*

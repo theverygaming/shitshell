@@ -15,5 +15,5 @@ shitshell: shitcstd/build/libshitcstd.a main.o
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	@rm -f shitshell *.oasm *.oc *.o
+	@rm -f shitshell *.oasm *.o
 	@rm -rf shitcstd/build/
