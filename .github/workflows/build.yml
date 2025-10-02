@@ -4,7 +4,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v5
         with:
           submodules: recursive
 
@@ -14,9 +14,9 @@ jobs:
           sudo apt-get install gcc-multilib g++-multilib cmake
       - name: compile
         run: cd $GITHUB_WORKSPACE && make
-      
+
       - name: upload binary
-        uses:  actions/upload-artifact@v2
+        uses:  actions/upload-artifact@v4
         with:
             name: binary
             path: ${{runner.workspace}}/shitshell/shitshell
