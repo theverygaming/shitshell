@@ -24,29 +24,18 @@ static int countc(const char *str, char c) {
     return count;
 }
 
-static void syscallfuzz() {
-    int number = 0;
-    while (true) {
-        pid_t pid = sys_fork();
-        number++;
-        if (pid == 0) {
-            for (int i = 0; i < 42069; i++) {
-                uint32_t syscall_id = rand() % 400;
-                if (syscall_id != 3) { // we are not testing sys_read... that may block the process and be a bit of an issue
-                    syscall(syscall_id, rand(), rand(), rand(), rand(), rand(), rand());
-                }
-            }
-            exit(rand());
-        }
-        sys_waitpid(pid, 0, 0);
-        srand(number + pid); // must advance random function
-    }
-}
-
 bool run_internal_cmd(int argc, char *argv[]) {
     if (!strcmp(argv[0], "help")) {
-        printf("shitshell command list:\nhelp\nboop [name]\nsysinfo -- print output from sysinfo syscall\nexit\nsyscallfuzz -- do the funny and fuzz kernel with random syscalls DO NOT RUN THIS ON "
-               "IMPORTANT MACHINES, YOU MAY LOSE FILES\nclear\nloop\ndebug -- vix specific\n");
+        printf(
+            "shitshell command list:\n"
+            "help\n"
+            "boop [name]\n"
+            "sysinfo -- print output from sysinfo syscall\n"
+            "exit\n"
+            "clear\n"
+            "fibonacci\n"
+            "echo\n"
+        );
         return true;
     }
 
@@ -99,30 +88,39 @@ bool run_internal_cmd(int argc, char *argv[]) {
         return true;
     }
 
-    if (!strcmp(argv[0], "syscallfuzz")) {
-        printf("you sure? then enter 'yes... i know i may lose important files'\n");
-        char buf[100];
-        sys_read(0, buf, sizeof(buf));
-        replace_chars(buf, sizeof(buf), '\n', '\0');
-        if (!strcmp(buf, "yes... i know i may lose important files")) {
-            printf("fuzzing kernel...\n");
-            syscallfuzz();
-        }
-        return true;
-    }
-
     if (!strcmp(argv[0], "clear")) {
         printf("\e[1;1H\e[2J");
         return true;
     }
 
-    if (!strcmp(argv[0], "loop")) {
-        while (true) {}
+    if (!strcmp(argv[0], "fibonacci")) {
+        unsigned long n_ = 12; // because shitcstd sscanf only supports long!
+        if (argc > 1) {
+            sscanf(argv[1], "%lu", &n_);
+        }
+
+        unsigned int n = n_;
+        unsigned int number = 1;
+        if (n != 0) {
+            unsigned int number_prev = 0;
+            for (unsigned int i = 1; i < n; i++) {
+                unsigned int prev_tmp = number;
+                number = number_prev + number;
+                number_prev = prev_tmp;
+            }
+        } else {
+            number = 0;
+        }
+
+        printf("F%u = %u\n", n, number);
         return true;
     }
 
-    if (!strcmp(argv[0], "debug")) {
-        syscall(0, 1, 0, 0, 0, 0, 0);
+    if (!strcmp(argv[0], "echo")) {
+        for (int i = 1; i < argc; i++) {
+            printf("%s ", argv[i]);
+        }
+        printf("\n");
         return true;
     }
 
@@ -172,8 +170,12 @@ int main(int argc, char *argv[], char *envp[]) {
         }
         replace_chars(input_buf, sizeof(input_buf), ' ', '\0');
 
+        if (strlen(arg_arr[0]) == 0) {
+            goto cleanup_buf;
+        }
+
         if (run_internal_cmd(arg_count, arg_arr)) {
-            continue;
+            goto cleanup_buf;
         }
 
         pid_t forked = sys_fork();
@@ -184,7 +186,8 @@ int main(int argc, char *argv[], char *envp[]) {
         }
         sys_waitpid(forked, 0, 0);
 
-        memset(input_buf, 0, 100); // clear buffer
+        cleanup_buf:
+            memset(input_buf, 0, 100); // clear buffer
     }
 
     return 0;
