@@ -27,7 +27,7 @@ static int countc(const char *str, char c) {
 bool run_internal_cmd(int argc, char *argv[]) {
     if (!strcmp(argv[0], "help")) {
         printf(
-            "shitshell command list:\n"
+            "shell builtins:\n"
             "help\n"
             "boop [name]\n"
             "sysinfo -- print output from sysinfo syscall\n"
