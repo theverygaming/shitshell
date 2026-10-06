@@ -1,17 +1,19 @@
-CC = gcc
-CFLAGS = -I shitcstd/include -nostdinc -nostdlib -Wall -m32 -march=i386 -fno-pie -fno-stack-protector -ffreestanding -g
+CC = $(CROSS_COMPILE)gcc
+LD = $(CROSS_COMPILE)ld
+CFLAGS = -I shitcstd/include -nostdinc -nostdlib -Wall -fno-pie -fno-stack-protector -ffreestanding -g
+LDFLAGS = -nostdlib -no-pie
 
 all: shitshell
 
 shitcstd/build/libshitcstd.a:
 	@mkdir -p shitcstd/build
-	@cd shitcstd/build && cmake .. && make
+	cd shitcstd/build && cmake .. -DCMAKE_C_COMPILER="$(CC)" && make
 
 shitshell: shitcstd/build/libshitcstd.a main.o
-	@ld -m elf_i386 -static -nostdlib $^ shitcstd/build/libshitcstd.a -o $@
+	@$(LD) $(LDFLAGS) $^ shitcstd/build/libshitcstd.a $(shell $(CC) -print-libgcc-file-name) -o $@
 
 %.o: %.c
-	@echo "-> compiling shitshell/$<"
+	@echo "  CC shitshell/$<"
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
