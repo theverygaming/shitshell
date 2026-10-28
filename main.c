@@ -1,9 +1,11 @@
-#include <linux/syscall.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <sys/utsname.h>
+#include <unistd.h>
+#include <sys/wait.h>
 
 static void replace_chars(char *str, size_t len, char c, char r) {
     while (len--) {
@@ -68,7 +70,7 @@ bool run_internal_cmd(int argc, char *argv[]) {
         return true;
     }
 
-    if (!strcmp(argv[0], "sysinfo")) {
+    /*if (!strcmp(argv[0], "sysinfo")) {
         struct sysinfo info;
         if (sys_sysinfo(&info) != 0) {
             printf("sysinfo skill issue\n");
@@ -80,7 +82,7 @@ bool run_internal_cmd(int argc, char *argv[]) {
                ((size_t)info.freeram * info.mem_unit) / 1048576,
                (size_t)info.procs);
         return true;
-    }
+    }*/
 
     if (!strcmp(argv[0], "exit")) {
         printf("https://tenor.com/view/crying-emoji-dies-gif-21956120\n");
@@ -132,26 +134,34 @@ int main(int argc, char *argv[], char *envp[]) {
 
     char input_buf[100];
 
-    struct sysinfo info;
+    /*struct sysinfo info;
     sys_sysinfo(&info);
     printf("uptime(seconds): %u\ntotal RAM: %uMiB\nfree RAM: %uMiB\nprocesses: %u\n",
            (size_t)info.uptime,
            ((size_t)info.totalram * info.mem_unit) / 1048576,
            ((size_t)info.freeram * info.mem_unit) / 1048576,
-           (size_t)info.procs);
+           (size_t)info.procs);*/
 
     struct utsname uname_buf;
-    sys_uname(&uname_buf);
+    uname(&uname_buf);
     printf("running on: %s %s %s %s %s\n", uname_buf.sysname, uname_buf.nodename, uname_buf.release, uname_buf.version, uname_buf.machine);
     while (true) {
         char cwd[100];
-        sys_getcwd(cwd, 100);
+        if (getcwd(cwd, 100) != 0) {
+            cwd[0] = 0;
+        }
         printf("%s@%s:%s# ", "unknown", uname_buf.nodename, cwd); // we do not figure out the current username because that would require reading /etc/passwd which vix doesn't support _yet_
 
-        sys_read(0, input_buf, sizeof(input_buf));
+        for (size_t i = 0; i < sizeof(input_buf); i++) {
+            if (fread(&input_buf[i], 1, 1, stdin) <= 0) {
+                return 1;
+            }
+            if (input_buf[i] == '\n') {
+                break;
+            }
+        }
         replace_chars(input_buf, sizeof(input_buf), '\n', '\0');
         /* create argv array, null terminated */
-        memcpy(input_buf, input_buf, strlen(input_buf));
         int arg_count = countc(input_buf, ' ') + 1; // count spaces in string
 
         if (input_buf[strlen(input_buf) - 1] == ' ') { // if string ends with space reduce arg_count by one to prevent passing an entirely empty argument
@@ -178,13 +188,13 @@ int main(int argc, char *argv[], char *envp[]) {
             goto cleanup_buf;
         }
 
-        pid_t forked = sys_fork();
+        pid_t forked = fork();
         if (!forked) {
-            sys_execve(arg_arr[0], arg_arr, 0);
+            execve(arg_arr[0], arg_arr, 0);
             printf("execve failed!\n");
             return 1; // execve failed
         }
-        sys_waitpid(forked, 0, 0);
+        waitpid(forked, 0, 0);
 
         cleanup_buf:
             memset(input_buf, 0, 100); // clear buffer
